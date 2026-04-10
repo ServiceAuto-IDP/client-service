@@ -1,0 +1,14 @@
+package com.serviceauto.client_service.dto.internal;
+
+import com.serviceauto.client_service.model.RequestCategory;
+import java.time.Instant;
+
+public record InternalCreateServiceRequest(
+        Long userId,
+        Long vehicleId,
+        RequestCategory category,
+        String description,
+        String status,
+        Instant createdAt
+) {
+}
