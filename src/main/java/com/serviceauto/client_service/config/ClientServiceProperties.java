@@ -11,6 +11,7 @@ public record ClientServiceProperties(
     public record IoService(String baseUrl) {
     }
 
-    public record Messaging(String requestCreatedExchange, String requestCreatedRoutingKey) {
+    public record Messaging(String requestCreatedExchange, String requestCreatedQueue, String requestCreatedRoutingKey) {
     }
 }
+

@@ -1,7 +1,6 @@
 package com.serviceauto.client_service.dto.internal;
 
 import com.serviceauto.client_service.model.RequestCategory;
-import java.time.Duration;
 import java.time.Instant;
 
 public record InternalServiceRequestResponse(
@@ -11,7 +10,7 @@ public record InternalServiceRequestResponse(
         RequestCategory category,
         String description,
         String status,
-        Duration estimatedResolutionTime,
+        Instant estimatedResolutionTime,
         Instant createdAt,
         Instant updatedAt
 ) {

@@ -5,6 +5,7 @@ import com.serviceauto.client_service.dto.internal.InternalRequestHistoryRespons
 import com.serviceauto.client_service.dto.internal.InternalServiceRequestResponse;
 import com.serviceauto.client_service.dto.internal.InternalVehicleRequest;
 import com.serviceauto.client_service.dto.internal.InternalVehicleResponse;
+import com.serviceauto.client_service.exception.InvalidIoRequestException;
 import com.serviceauto.client_service.exception.RequestNotFoundException;
 import com.serviceauto.client_service.exception.UpstreamServiceException;
 import com.serviceauto.client_service.exception.VehicleNotFoundException;
@@ -123,9 +124,18 @@ public class IoServiceClient {
     private <T> T execute(IoCall<T> call, String errorMessage) {
         try {
             return call.call();
+        } catch (HttpClientErrorException.BadRequest exception) {
+            throw new InvalidIoRequestException(extractMessage(exception));
         } catch (RestClientException exception) {
             throw new UpstreamServiceException(errorMessage);
         }
+    }
+
+    private String extractMessage(HttpClientErrorException exception) {
+        String responseBody = exception.getResponseBodyAsString();
+        return responseBody == null || responseBody.isBlank()
+                ? "Invalid request sent to io-service"
+                : responseBody;
     }
 
     @FunctionalInterface

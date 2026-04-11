@@ -7,11 +7,13 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,6 +35,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             InvalidRequestCategoryException.class,
+            InvalidIoRequestException.class,
+            HttpMessageNotReadableException.class,
+            MethodArgumentTypeMismatchException.class,
             MethodArgumentNotValidException.class,
             ConstraintViolationException.class
     })
@@ -49,6 +54,10 @@ public class GlobalExceptionHandler {
                     .stream()
                     .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
                     .collect(Collectors.joining(", "));
+            case HttpMessageNotReadableException httpMessageNotReadableException ->
+                    extractRootCauseMessage(httpMessageNotReadableException);
+            case MethodArgumentTypeMismatchException methodArgumentTypeMismatchException ->
+                    "Invalid value for parameter '" + methodArgumentTypeMismatchException.getName() + "'";
             default -> exception.getMessage();
         };
 
@@ -73,5 +82,13 @@ public class GlobalExceptionHandler {
                 message,
                 path
         ));
+    }
+
+    private String extractRootCauseMessage(Throwable throwable) {
+        Throwable current = throwable;
+        while (current.getCause() != null) {
+            current = current.getCause();
+        }
+        return current.getMessage();
     }
 }
