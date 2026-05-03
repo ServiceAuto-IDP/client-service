@@ -41,7 +41,7 @@ class VehicleServiceTest {
         );
 
         assertEquals(1L, response.id());
-        assertEquals("B123XYZ", response.plateNumber());
+        assertEquals("B123XYZ", response.licensePlate());
         verify(metricsService).incrementVehiclesCreated();
     }
 

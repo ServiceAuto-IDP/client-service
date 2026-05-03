@@ -19,12 +19,14 @@ public class VehicleService {
     private final MetricsService metricsService;
 
     public VehicleResponse createVehicle(Long userId, CreateVehicleRequest request) {
-        InternalVehicleResponse vehicle = ioServiceClient.createVehicle(new InternalVehicleRequest(
+        InternalVehicleRequest internalRequest = new InternalVehicleRequest(
                 userId,
-                request.plateNumber(),
+                request.licensePlate(),
                 request.brand(),
                 request.model()
-        ));
+        );
+        System.out.println("Sending to io-service: " + internalRequest);
+        InternalVehicleResponse vehicle = ioServiceClient.createVehicle(internalRequest);
         metricsService.incrementVehiclesCreated();
         return toResponse(vehicle);
     }
@@ -46,7 +48,7 @@ public class VehicleService {
         validateVehicleOwnership(userId, existingVehicle);
         InternalVehicleResponse updatedVehicle = ioServiceClient.updateVehicle(vehicleId, new InternalVehicleRequest(
                 userId,
-                request.plateNumber(),
+                request.licensePlate(),
                 request.brand(),
                 request.model()
         ));
@@ -69,7 +71,7 @@ public class VehicleService {
         return new VehicleResponse(
                 vehicle.id(),
                 vehicle.userId(),
-                vehicle.plateNumber(),
+                vehicle.licensePlate(),
                 vehicle.brand(),
                 vehicle.model()
         );

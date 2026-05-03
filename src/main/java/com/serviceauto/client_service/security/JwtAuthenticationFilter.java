@@ -67,9 +67,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             Long userId = Long.valueOf(String.valueOf(userIdClaim));
-            String email = String.valueOf(claims.getOrDefault("sub", ""));
+            String username = String.valueOf(claims.getOrDefault("sub", ""));
             String role = String.valueOf(claims.getOrDefault("role", "CLIENT"));
-            return new AuthenticatedUser(userId, email, role);
+            return new AuthenticatedUser(userId, username, role);
         } catch (IllegalArgumentException exception) {
             throw new BadCredentialsException("Invalid JWT token", exception);
         } catch (IOException exception) {
